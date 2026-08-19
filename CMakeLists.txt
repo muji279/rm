@@ -47,7 +47,9 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
     component/support/font.c
     bsp/Src/bsp_oled.c
+    bsp/Src/bsp_adc.c
     application/UI/UI.c
+    application/Operate/joystick.c
 )
 
 # Add include paths
@@ -56,6 +58,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     bsp/Inc
     component/support
     application/UI
+    application/Operate
 )
 
 # Add project symbols (macros)
