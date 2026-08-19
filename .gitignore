@@ -1,0 +1,17 @@
+# ===== 编译产物 =====
+build/
+cmake-build-*/
+*.o
+*.obj
+*.elf
+*.map
+*.su
+*.lst
+*.bak
+
+# ===== CLion 本地配置（共享配置仍保留） =====
+.idea/workspace.xml
+.idea/shelf/
+.idea/httpRequests/
+.idea/dataSources/
+.idea/dataSources.local.xml
