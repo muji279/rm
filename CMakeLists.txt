@@ -48,8 +48,10 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     component/support/font.c
     bsp/Src/bsp_oled.c
     bsp/Src/bsp_adc.c
+    bsp/Src/bsp_servo_pwm.c
     application/UI/UI.c
     application/Operate/joystick.c
+    application/Gimbal/Gimbal.c
 )
 
 # Add include paths
