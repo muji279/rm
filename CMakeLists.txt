@@ -51,10 +51,13 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     bsp/Src/bsp_adc.c
     bsp/Src/bsp_servo_pwm.c
     bsp/Src/bsp_motor.c
+    bsp/Src/bsp_can.c
     application/UI/UI.c
     application/Operate/joystick.c
     application/Gimbal/Gimbal.c
     application/Chassis/Chassis.c
+    application/Communication/can_send.c
+    application/Communication/can_receive.c
 )
 
 # Add include paths
@@ -66,6 +69,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     application/Operate
     application/Chassis
     component/controller
+    application/Communication
 )
 
 # Add project symbols (macros)
