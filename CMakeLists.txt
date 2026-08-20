@@ -64,6 +64,8 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     component/support
     application/UI
     application/Operate
+    application/Chassis
+    component/controller
 )
 
 # Add project symbols (macros)

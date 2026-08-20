@@ -3,8 +3,7 @@
 
 #include "main.h"
 
-/* TB6612 方向引脚：IN1/IN2（当前在 CubeMX 里未配置，此处直接初始化。
- * 若在 CubeMX 中改用了其他引脚，同步修改下面四个宏即可） */
+/* TB6612 方向引脚：IN1/IN2（CubeMX 已配置为 PA4/PA5 推挽输出） */
 #define MOTOR_IN1_GPIO_PORT   GPIOA
 #define MOTOR_IN1_PIN         GPIO_PIN_4
 #define MOTOR_IN2_GPIO_PORT   GPIOA

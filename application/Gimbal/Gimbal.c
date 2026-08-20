@@ -4,7 +4,7 @@
 #include "cmsis_os.h"
 
 /* 摇杆 ADC 为 12 位：0~4095，理论中位 2048 */
-#define JOYSTICK_X_MID       2048u
+#define JOYSTICK_X_MID       2900u
 /* 中位附近死区（ADC 单位），摇杆松手回中后舵机保持静止。
  * 若发现松手后舵机仍缓慢转动，说明模块中位有偏差，可适当加大该值。 */
 #define JOYSTICK_X_DEADZONE  200u

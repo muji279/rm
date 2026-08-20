@@ -5,12 +5,12 @@ void Motor_Init(void)
 {
   GPIO_InitTypeDef gpio_init = {0};
 
-  /* TB6612 方向引脚配置为推挽输出 */
+  /* TB6612 方向引脚配置为推挽输出（CubeMX 已配置，此处重复初始化保证自包含） */
   __HAL_RCC_GPIOA_CLK_ENABLE();
   gpio_init.Pin   = MOTOR_IN1_PIN | MOTOR_IN2_PIN;
   gpio_init.Mode  = GPIO_MODE_OUTPUT_PP;
   gpio_init.Speed = GPIO_SPEED_FREQ_LOW;
-  HAL_GPIO_Init(GPIOA, &gpio_init);
+  HAL_GPIO_Init(MOTOR_IN1_GPIO_PORT, &gpio_init);
 
   /* 初始状态：惰转停止 */
   HAL_GPIO_WritePin(MOTOR_IN1_GPIO_PORT, MOTOR_IN1_PIN, GPIO_PIN_RESET);
