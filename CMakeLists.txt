@@ -46,12 +46,15 @@ target_link_directories(${CMAKE_PROJECT_NAME} PRIVATE
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user sources here
     component/support/font.c
+    component/controller/PID.c
     bsp/Src/bsp_oled.c
     bsp/Src/bsp_adc.c
     bsp/Src/bsp_servo_pwm.c
+    bsp/Src/bsp_motor.c
     application/UI/UI.c
     application/Operate/joystick.c
     application/Gimbal/Gimbal.c
+    application/Chassis/Chassis.c
 )
 
 # Add include paths
