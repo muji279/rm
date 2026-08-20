@@ -1,4 +1,5 @@
 #include "can_receive.h"
+#include "Detection.h"
 #include "can.h"
 
 Can_RawFrame_t can_rx_frame = {0};
@@ -31,6 +32,9 @@ void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan_ptr)
   {
     can_rx_frame.data[i] = rx_data[i];
   }
+
+  /* 收到板间通信报文 -> 上报 CAN 通信心跳 */
+  detect_handle(DETECT_CAN_COMM);
 }
 
 /**

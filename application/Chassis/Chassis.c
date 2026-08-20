@@ -1,6 +1,7 @@
 #include "Chassis.h"
 #include "bsp_motor.h"
 #include "joystick.h"
+#include "Detection.h"
 #include "PID.h"
 #include "tim.h"
 #include "FreeRTOS.h"
@@ -132,6 +133,14 @@ void Motor_task(void *argument)
   {
     motor_target_rpm = JoystickY_To_TargetRpm(joystick.y);
     Encoder_UpdateSpeed();
+
+    /* 电机心跳：有编码器反馈（实际转速≠0），或电机本就静止（目标=0）时视为在线。
+     * 推杆有目标但编码器长时间无计数（堵转/反馈断线）-> 不上报心跳，
+     * 检测任务在超时后判为电机异常，LED 呼吸 */
+    if (motor_target_rpm == 0.0f || motor_actual_rpm != 0.0f)
+    {
+      detect_handle(DETECT_MOTOR);
+    }
 
     float out = pid_calc(&motor_speed_pid, motor_actual_rpm, motor_target_rpm);
     Motor_SetSpeed((int16_t)out);
