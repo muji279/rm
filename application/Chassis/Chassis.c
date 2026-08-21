@@ -131,6 +131,7 @@ void Motor_task(void *argument)
 
   for (;;)
   {
+    /* 摇杆在云台板，通过 CAN（ID 1）写入统一结构体 joystick，底板直接使用 */
     motor_target_rpm = JoystickY_To_TargetRpm(joystick.y);
     Encoder_UpdateSpeed();
 

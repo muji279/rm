@@ -1,10 +1,10 @@
 #include "can_receive.h"
 #include "Detection.h"
+#include "joystick.h"
 #include "can.h"
 
-Can_RawFrame_t can_rx_frame     = {0};
-Can_Joystick_t can_joystick_data = {0};
-Can_Servo_t    can_servo_data    = {0};
+Can_RawFrame_t can_rx_frame  = {0};
+Can_Servo_t    can_servo_data = {0};
 
 /**
  * @brief FIFO1 接收回调：自定义板间协议（ID 1 摇杆、ID 2 舵机）走这里
@@ -35,9 +35,10 @@ void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan_ptr)
   switch (rx_header.StdId)
   {
     case 0x001: /* 摇杆数据：X/Y 各 2 字节，小端 */
-      can_joystick_data.x = (uint16_t)(rx_data[0] | (rx_data[1] << 8));
-      can_joystick_data.y = (uint16_t)(rx_data[2] | (rx_data[3] << 8));
-      can_joystick_data.updated = 1;
+      /* ID 1 摇杆数据直接写入统一结构体（云台板 ADC 采样值） */
+      joystick.x = (uint16_t)(rx_data[0] | (rx_data[1] << 8));
+      joystick.y = (uint16_t)(rx_data[2] | (rx_data[3] << 8));
+      joystick.updated = 1;
       break;
 
     case 0x002: /* 舵机数据：target_speed[0..1] + online[2] */

@@ -12,14 +12,6 @@ typedef struct
   uint8_t  updated;  /* 是否有新数据：接收中断里置 1，应用层解析后清零 */
 } Can_RawFrame_t;
 
-/* ID 1 解析结果：摇杆数据 */
-typedef struct
-{
-  uint16_t x;       /* X 轴 ADC 原始值（0~4095） */
-  uint16_t y;       /* Y 轴 ADC 原始值（0~4095） */
-  uint8_t  updated; /* 新数据标志 */
-} Can_Joystick_t;
-
 /* ID 2 解析结果：舵机数据 */
 typedef struct
 {
@@ -29,7 +21,6 @@ typedef struct
 } Can_Servo_t;
 
 extern Can_RawFrame_t can_rx_frame;
-extern Can_Joystick_t can_joystick_data;
 extern Can_Servo_t    can_servo_data;
 
 /* HAL 接收回调（由 CAN1_RX0/CAN1_RX1_IRQHandler -> HAL_CAN_IRQHandler 调用） */
