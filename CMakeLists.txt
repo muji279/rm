@@ -60,6 +60,7 @@ target_sources(${CMAKE_PROJECT_NAME} PRIVATE
     application/Communication/can_send.c
     application/Communication/can_receive.c
     application/Detection/Detection.c
+    application/System/System.c
 )
 
 # Add include paths
@@ -73,6 +74,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
     component/controller
     application/Communication
     application/Detection
+    application/System
 )
 
 # Add project symbols (macros)
