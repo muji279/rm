@@ -76,8 +76,12 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
 )
 
 # Add project symbols (macros)
+# 板级宏：二选一（烧录哪块板就定义哪个）
+#   烧录云台板 -> GIMBAL
+#   烧录底盘板 -> CHASSIS
 target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined symbols
+    CHASSIS
 )
 
 # Remove wrong libob.a library dependency when using cpp files

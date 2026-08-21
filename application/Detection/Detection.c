@@ -39,8 +39,9 @@ void detect_handle(uint8_t index)
  * 周期巡检所有使能的设备，超过阈值没有心跳就判离线；
  * 有设备离线时让 LED 呈呼吸灯效果，全部在线则熄灭。
  *
- * TODO: 预编译（GIMBAL/CHASSIS）时按板子裁剪设备：
- *   云台板只使能 DETECT_CAN_COMM，底盘板只使能 DETECT_MOTOR
+ * 板级宏（CMakeLists.txt 中定义）：
+ *   GIMBAL  -> 只检测板间 CAN 通信
+ *   CHASSIS -> 只检测电机反馈
  */
 void Detect_task(void *argument)
 {
@@ -58,9 +59,15 @@ void Detect_task(void *argument)
     detect_list[i].offline_threshold = 0;
   }
 
-  /* 暂时两块板都使能：CAN 通信 500ms、电机反馈 500ms 判离线 */
+#ifdef GIMBAL
+  /* 云台板：CAN 通信 500ms 没有收到底盘板报文 -> 判离线，LED 呼吸 */
   detect_init(DETECT_CAN_COMM, 500u);
+#elif defined(CHASSIS)
+  /* 底盘板：电机该转却没编码器反馈 500ms -> 判离线，LED 呼吸 */
   detect_init(DETECT_MOTOR, 500u);
+#else
+#error "请先在 CMakeLists.txt 中定义 GIMBAL 或 CHASSIS 宏"
+#endif
 
   for (;;)
   {
