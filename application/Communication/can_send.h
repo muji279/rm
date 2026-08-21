@@ -3,35 +3,29 @@
 
 #include "main.h"
 
-/* ============ 板间通信发送函数（仿步兵工程 can_send.c） ============
- * 报文 ID 划分（云台板 <-> 底盘板，F103 只有 CAN1）：
- *   云台 -> 底盘：0x110 底盘速度  0x111 控制量   0x117 模式
- *   底盘 -> 云台：0x113 云台角度  0x114 裁判数据 0x115 弹速热量 0x116 发射限制
- * 具体字节布局与步兵工程保持一致，方便两板互认。
+/* ============ 自定义板间通信协议 ============
+ * 标准帧、数据帧、DLC=8，两板使用同一份代码，字节序约定一致（小端）。
+ *   ID 1（0x001）：摇杆数据，载荷 = X/Y 两路 12 位 ADC 原始值
+ *   ID 2（0x002）：舵机数据，载荷 = 在线标志 + 目标转速
  */
 
-/* 云台 -> 底盘：底盘期望速度与开关量 */
-void Send_Chassis_Speed(int16_t ch1, int16_t ch0, int16_t ch2,
-                        int32_t shift, int32_t ctrl, int32_t c, int32_t v);
+/* ID 2 载荷：舵机数据结构体（逻辑上的“该舵机的所有数据”）
+ * 字节布局：
+ *   target_speed [0..1]  int16，目标转速：0=停止，±1000=最大，正=逆时针，负=顺时针
+ *   online       [2]     uint8，1=在线，0=离线
+ *   reserved     [3..7]  预留（扩展用）
+ */
+typedef struct
+{
+  int16_t target_speed;
+  uint8_t online;
+  uint8_t reserved[5];
+} Servo_Data_t;
 
-/* 云台 -> 底盘：按键 W/A/S/D 与云台相对角度 */
-void Send_Control(int32_t W, int32_t A, int32_t S, int32_t D, float relative_angle);
+/* ID 1：发送摇杆数据（X/Y 为 ADC 原始值，0~4095） */
+void Send_Joystick_Data(uint16_t x, uint16_t y);
 
-/* 云台 -> 底盘：各模块工作模式 */
-void Send_Mode(int16_t chassis_mode, int16_t gimbal_mode,
-               int16_t launcher_mode, int16_t auto_aim_mode);
-
-/* 底盘 -> 云台：云台俯仰目标角度与角速度 */
-void Send_pitch_down(float absolute_angle, float vw);
-
-/* 底盘 -> 云台：裁判系统数据（缓冲能量、功率限制、机器人 ID 等） */
-void Send_referee(uint16_t buffer_energy, uint16_t power_limit, uint8_t robot_id,
-                  uint8_t gimbal_output, uint8_t chassis_output, uint8_t game_progress);
-
-/* 底盘 -> 云台：弹速与枪口热量（用于摩擦轮转速补偿） */
-void Send_bullet_speed(float bullet_speed, float shooter_heat0);
-
-/* 底盘 -> 云台：发射限制（射速上限、冷却上限） */
-void Send_limit_speed(uint16_t shooter_limit, uint16_t shooter_cooling);
+/* ID 2：发送舵机数据（在线标志 + 目标转速） */
+void Send_Servo_Data(const Servo_Data_t *servo);
 
 #endif /* CAN_SEND_H */

@@ -15,11 +15,11 @@ volatile uint32_t can1_last_error = 0;
 /**
  * @brief CAN 初始化：配置过滤器 + 启动 CAN1 + 使能接收中断
  *
- * 参考步兵工程的 CAN 过滤配置：
- * 板间通信报文使用 0x110~0x11F，统一放入 FIFO1。
+ * 自定义板间协议，只接收两个 ID，统一放入 FIFO1：
+ *   ID 1（0x001）：摇杆数据
+ *   ID 2（0x002）：舵机数据
  * 标准 ID 的 11 位放在过滤器寄存器的 bit[15:5]（即 FilterIdHigh 的 bit[15:5]），
- * 所以 ID 要左移 5 位；Mask 0xFF00 表示只匹配 ID 的高 8 位，
- * 即 0x110~0x11F 范围内的报文都能收到。
+ * 所以 ID 要左移 5 位；Mask 0xFFE0 表示精确匹配单个 ID。
  */
 void CAN_init(void)
 {
@@ -33,10 +33,17 @@ void CAN_init(void)
   can_filter_st.FilterMaskIdHigh = 0xFFFF;
   can_filter_st.FilterMaskIdLow = 0x0000;
 
-  /* 板间通信：[0x110 ~ 0x11F] -> FIFO1 */
+  /* ID 1（摇杆数据）-> FIFO1 */
   can_filter_st.FilterBank = 0;
-  can_filter_st.FilterIdHigh = (0x110 << 5);
-  can_filter_st.FilterMaskIdHigh = 0xFF00;
+  can_filter_st.FilterIdHigh = (0x001 << 5);
+  can_filter_st.FilterMaskIdHigh = 0xFFE0;   /* 精确匹配单个 ID */
+  can_filter_st.FilterFIFOAssignment = CAN_RX_FIFO1;
+  HAL_CAN_ConfigFilter(&hcan, &can_filter_st);
+
+  /* ID 2（舵机数据）-> FIFO1 */
+  can_filter_st.FilterBank = 1;
+  can_filter_st.FilterIdHigh = (0x002 << 5);
+  can_filter_st.FilterMaskIdHigh = 0xFFE0;
   can_filter_st.FilterFIFOAssignment = CAN_RX_FIFO1;
   HAL_CAN_ConfigFilter(&hcan, &can_filter_st);
 

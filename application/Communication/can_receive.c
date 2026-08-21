@@ -2,17 +2,15 @@
 #include "Detection.h"
 #include "can.h"
 
-Can_RawFrame_t can_rx_frame = {0};
+Can_RawFrame_t can_rx_frame     = {0};
+Can_Joystick_t can_joystick_data = {0};
+Can_Servo_t    can_servo_data    = {0};
 
 /**
- * @brief FIFO1 接收回调：板间通信报文（0x110~0x11F）走这里
+ * @brief FIFO1 接收回调：自定义板间协议（ID 1 摇杆、ID 2 舵机）走这里
  *
  * 由 stm32f1xx_it.c 的 CAN1_RX1_IRQHandler -> HAL_CAN_IRQHandler 触发，
  * 不需要自己再写中断函数（否则会和 CubeMX 生成的中断重复定义）。
- *
- * TODO: 下一步写预编译（GIMBAL/CHASSIS）时，在这里按板子分发：
- *   #ifdef GIMBAL  -> Chassis_to_Gimbal_Can(std_id, data)
- *   #ifdef CHASSIS -> Gimbal_to_Chassis_Can(std_id, data)
  */
 void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan_ptr)
 {
@@ -31,6 +29,25 @@ void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan_ptr)
   for (uint8_t i = 0; i < 8; i++)
   {
     can_rx_frame.data[i] = rx_data[i];
+  }
+
+  /* 按 ID 解析（字节布局与 can_send.c 一一对应） */
+  switch (rx_header.StdId)
+  {
+    case 0x001: /* 摇杆数据：X/Y 各 2 字节，小端 */
+      can_joystick_data.x = (uint16_t)(rx_data[0] | (rx_data[1] << 8));
+      can_joystick_data.y = (uint16_t)(rx_data[2] | (rx_data[3] << 8));
+      can_joystick_data.updated = 1;
+      break;
+
+    case 0x002: /* 舵机数据：target_speed[0..1] + online[2] */
+      can_servo_data.target_speed = (int16_t)(rx_data[0] | (rx_data[1] << 8));
+      can_servo_data.online = rx_data[2];
+      can_servo_data.updated = 1;
+      break;
+
+    default:
+      break;
   }
 
   /* 收到板间通信报文 -> 上报 CAN 通信心跳 */
