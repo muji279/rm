@@ -63,7 +63,8 @@ void Detect_task(void *argument)
   /* 云台板：CAN 通信 500ms 没有收到底盘板报文 -> 判离线，LED 呼吸 */
   detect_init(DETECT_CAN_COMM, 500u);
 #elif defined(CHASSIS)
-  /* 底盘板：电机该转却没编码器反馈 500ms -> 判离线，LED 呼吸 */
+  /* 底盘板：CAN 通信 + 电机反馈都要检测（OLED 显示通信状态，电机异常 LED 呼吸） */
+  detect_init(DETECT_CAN_COMM, 500u);
   detect_init(DETECT_MOTOR, 500u);
 #else
 #error "请先在 CMakeLists.txt 中定义 GIMBAL 或 CHASSIS 宏"

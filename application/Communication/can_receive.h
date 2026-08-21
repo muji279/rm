@@ -15,8 +15,8 @@ typedef struct
 /* ID 2 解析结果：舵机数据 */
 typedef struct
 {
-  uint8_t  online;       /* 1=在线，0=离线 */
-  int16_t  target_speed; /* 目标转速（0=停止，±1000=最大） */
+  uint8_t  online;          /* 1=在线，0=离线 */
+  int16_t  target_rpm_x10; /* 舵机目标转速×10（0.1 RPM，正=顺时针，负=逆时针，最大±556） */
   uint8_t  updated;      /* 新数据标志 */
 } Can_Servo_t;
 

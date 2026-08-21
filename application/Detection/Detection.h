@@ -21,7 +21,7 @@ typedef struct
 /* 设备索引：先统一列出，预编译（GIMBAL/CHASSIS）时再按板子裁剪 */
 typedef enum
 {
-  DETECT_CAN_COMM = 0,        /* 板间 CAN 通信（云台板依赖底盘板数据） */
+  DETECT_CAN_COMM = 0,        /* 板间 CAN 通信（收到任一 CAN 报文即刷新心跳） */
   DETECT_MOTOR,               /* 底盘电机反馈（编码器） */
   DETECT_DEVICE_LIST_LEN
 } detect_device_index;

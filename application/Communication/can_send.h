@@ -11,13 +11,15 @@
 
 /* ID 2 载荷：舵机数据结构体（逻辑上的“该舵机的所有数据”）
  * 字节布局：
- *   target_speed [0..1]  int16，目标转速：0=停止，±1000=最大，正=逆时针，负=顺时针
+ *   target_rpm_x10 [0..1]  int16，舵机目标转速×10（0.1 RPM）
+ *                          正=顺时针（脉宽 1000~1400us），负=逆时针（脉宽 1600~2000us）
+ *                          最大 ±556（约 ±55.6 RPM，数据手册 0.18s/60° 估算）
  *   online       [2]     uint8，1=在线，0=离线
  *   reserved     [3..7]  预留（扩展用）
  */
 typedef struct
 {
-  int16_t target_speed;
+  int16_t target_rpm_x10;
   uint8_t online;
   uint8_t reserved[5];
 } Servo_Data_t;

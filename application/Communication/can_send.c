@@ -56,7 +56,7 @@ void Send_Joystick_Data(uint16_t x, uint16_t y)
 
 /* ==================== ID 2：舵机数据 ====================
  * 字节布局与 can_send.h 中 Servo_Data_t 一致：
- *   data[0..1] = target_speed（int16，小端）
+ *   data[0..1] = target_rpm_x10（int16，小端，×10 RPM）
  *   data[2]    = online
  *   data[3..7] = 保留
  */
@@ -65,7 +65,7 @@ void Send_Servo_Data(const Servo_Data_t *servo)
   uint8_t send_data[8] = {0};
   union uint16_bytes u;
 
-  u.value = servo->target_speed;
+  u.value = servo->target_rpm_x10;
   send_data[0] = u.data[0];
   send_data[1] = u.data[1];
 

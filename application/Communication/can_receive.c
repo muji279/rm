@@ -41,8 +41,8 @@ void HAL_CAN_RxFifo1MsgPendingCallback(CAN_HandleTypeDef *hcan_ptr)
       joystick.updated = 1;
       break;
 
-    case 0x002: /* 舵机数据：target_speed[0..1] + online[2] */
-      can_servo_data.target_speed = (int16_t)(rx_data[0] | (rx_data[1] << 8));
+    case 0x002: /* 舵机数据：target_rpm_x10[0..1] + online[2] */
+      can_servo_data.target_rpm_x10 = (int16_t)(rx_data[0] | (rx_data[1] << 8));
       can_servo_data.online = rx_data[2];
       can_servo_data.updated = 1;
       break;
@@ -73,6 +73,9 @@ void HAL_CAN_RxFifo0MsgPendingCallback(CAN_HandleTypeDef *hcan_ptr)
   }
 
   HAL_CAN_GetRxMessage(hcan_ptr, CAN_RX_FIFO0, &rx_header, rx_data);
+
+  /* 任何 CAN 报文到达都刷新板间通信心跳（FIFO0：预留电机/裁判系统） */
+  detect_handle(DETECT_CAN_COMM);
 
   /* TODO: 电机反馈 / 裁判系统数据解析 */
   (void)rx_header;
