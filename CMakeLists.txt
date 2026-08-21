@@ -83,7 +83,7 @@ target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE
 #   烧录底盘板 -> CHASSIS
 target_compile_definitions(${CMAKE_PROJECT_NAME} PRIVATE
     # Add user defined symbols
-    CHASSIS
+        GIMBAL
 )
 
 # Remove wrong libob.a library dependency when using cpp files
